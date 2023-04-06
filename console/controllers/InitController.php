@@ -12,11 +12,11 @@ class InitController extends Controller
     /**
      * @throws Exception
      */
-    public function actionIndex()
+    public function actionIndex(string $password)
     {
         $model = new Admin();
         $model->username = 'admin';
-        $model->password_hash = Yii::$app->getSecurity()->generatePasswordHash('myadmin@2412.uz');
+        $model->password_hash = Yii::$app->getSecurity()->generatePasswordHash($password);
         $model->email = 'admin@urdu.uz';
         $model->generateAuthKey();
         $model->generateEmailVerificationToken();

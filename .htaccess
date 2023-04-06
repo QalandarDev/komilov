@@ -1,15 +1,19 @@
     Options +FollowSymlinks
-    # Enable mod_rewrite
+    #Enable mod_rewrite
     RewriteEngine On
 
-    # Backend redirect
+    #Backend redirect
     RewriteCond %{REQUEST_URI} ^/admin
     RewriteRule ^admin(.*) /backend/web/$1 [L]
 
-    # Statics redirect
-#    RewriteCond %{REQUEST_URI} ^/phpm
-#    RewriteRule ^phpm/(.*)$ phpm/$1 [L]
-
+    #Statics redirect
+    #RewriteCond %{REQUEST_URI} ^/phpm
+    #RewriteRule ^phpm/(.*)$ phpm/$1 [L]
+    RewriteCond %{REQUEST_URI} ^/(assets|css|js|images)
+    RewriteRule ^assets/(.*)$ frontend/web/assets/$1 [L]
+    RewriteRule ^css/(.*)$ frontend/web/css/$1 [L]
+    RewriteRule ^js/(.*)$ frontend/web/js/$1 [L]
+    RewriteRule ^images/(.*)$ frontend/web/images/$1 [L]
     # Frontend redirect
     RewriteCond %{REQUEST_URI} ^(.*)$
     RewriteRule ^(.*)$ frontend/web/$1

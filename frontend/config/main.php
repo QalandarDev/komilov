@@ -46,8 +46,7 @@ return [
         'urlManager' => [
             'enablePrettyUrl' => true,
             'showScriptName' => false,
-            'rules' => [
-            ],
+            'rules' =>include __DIR__ . '/url-rules.php',
         ],
 
     ],

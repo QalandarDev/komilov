@@ -1,9 +1,12 @@
 <?php
 
 /** @var \yii\web\View $this */
+
 /** @var string $content */
 
 use common\widgets\Alert;
+use common\widgets\CategoryWidget;
+use common\widgets\LoginWidget;
 use frontend\assets\AppAsset;
 use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
@@ -48,7 +51,7 @@ AppAsset::register($this);
         'items' => $menuItems,
     ]);
     if (Yii::$app->user->isGuest) {
-        echo Html::tag('div',Html::a('Login',['/site/login'],['class' => ['btn btn-link login text-decoration-none']]),['class' => ['d-flex']]);
+        echo Html::tag('div', Html::a('Login', ['/site/login'], ['class' => ['btn btn-link login text-decoration-none']]), ['class' => ['d-flex']]);
     } else {
         echo Html::beginForm(['/site/logout'], 'post', ['class' => 'd-flex'])
             . Html::submitButton(
@@ -61,24 +64,53 @@ AppAsset::register($this);
     ?>
 </header>
 
-<main role="main" class="flex-shrink-0">
+<main id="main" class="flex-shrink-0" role="main">
     <div class="container">
-        <?= Breadcrumbs::widget([
-            'links' => isset($this->params['breadcrumbs']) ? $this->params['breadcrumbs'] : [],
-        ]) ?>
+        <div class="row">
+            <div class="col-lg-12">
+                <div id="rtb-top"></div>
+            </div>
+            <aside class="col-lg-3">
+                <?php if (Yii::$app->user->isGuest): ?>
+                    <?php try {
+                        echo LoginWidget::widget();
+                    } catch (Throwable $e) {
+                        echo $e->getMessage();
+                    } ?>
+                <?php endif; ?>
+
+                <?php
+                try {
+                    echo CategoryWidget::widget();
+                } catch (Throwable $e) {
+                    echo $e->getMessage();
+                }
+                ?>
+                <div id="rtb-side"></div>
+            </aside>
+            <div class="col-lg-9">
+                <section class="main-breadcrumb p-1">
+                    <?php if (!empty($this->params['breadcrumbs'])): ?>
+                        <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]) ?>
+                    <?php endif ?>
+                </section>
+                <?= $content ?>
+            </div>
+        </div>
         <?= Alert::widget() ?>
-        <?= $content ?>
     </div>
 </main>
 
-<footer class="footer mt-auto py-3 text-muted">
+<footer id="footer" class="mt-auto py-3 bg-light">
     <div class="container">
-        <p class="float-start">&copy; <?= Html::encode(Yii::$app->name) ?> <?= date('Y') ?></p>
-        <p class="float-end"><?= "Powered by ".Html::a("H-Soft",'https://qalandar.uz/')?></p>
+        <div class="row text-muted">
+            <div class="col-md-6 text-center text-md-start">&copy; My Company <?= date('Y') ?></div>
+            <div class="col-md-6 text-center text-md-end"><?= Yii::powered() ?></div>
+        </div>
     </div>
 </footer>
 
 <?php $this->endBody() ?>
 </body>
 </html>
-<?php $this->endPage();
+<?php $this->endPage() ?>
