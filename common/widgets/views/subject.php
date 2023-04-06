@@ -5,6 +5,8 @@
  * @var $subjects Subjects[]|array|ActiveRecord[]
  */
 
+use common\models\Category;
+use common\models\Documents;
 use common\models\Subjects;
 use yii\bootstrap5\Html;
 use yii\db\ActiveRecord;
@@ -14,8 +16,19 @@ use yii\db\ActiveRecord;
     <div class="row ">
         <?php foreach ($subjects as $subject): ?>
             <div class="mb-1 col-sm-6 col-md-4 d-grid">
-                <?= Html::a(
-                    $subject->name_uz,
+                <?php
+                $badge='';
+                if(Yii::$app->request->get('category')!==null){
+
+                    $count= Documents::find()->where(['subject_id'=>$subject->id,
+                        'category_id'=> Category::find()->where(['slug'=>Yii::$app->request->get('category')])->one()?->id
+                    ])->count();
+
+                    $badge=($count>0)?Html::tag('span',$count,['class'=>'badge bg-primary']):'';
+                }
+
+                echo Html::a(
+                    $subject->name_uz.$badge,
                     ['site/index',
                         'subject' => $subject->slug,
                         'category' => Yii::$app->request->get('category')

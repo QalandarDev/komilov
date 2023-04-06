@@ -30,12 +30,23 @@ $this->title = 'My Yii Application';
     <div class="card-body d-none d-sm-block"><!----><!---->
         <div class="row">
             <!--                    if request not have subject and category-->
-            <?= (Yii::$app->request->get('subject') == null or Yii::$app->request->get('category') == null)
-                ? SubjectWidget::widget()
-                : '' ?>
+            <?php
+            $request = Yii::$app->request;
+            //            dd($request->get());
+            if (($request->get('category') === null || $request->get('subject') === null)) {
+                echo SubjectWidget::widget();
+            }
+            ?>
         </div>
     </div>
 </div>
+<?php if ($request->get('category') !== null && $request->get('subject') !== null) {
+    echo \common\widgets\ListFilesWidget::widget([
+        'category' => $request->get('category'),
+        'subject' => $request->get('subject'),
+    ]);
+}
+?>
 <section class="recent-documents">
     <div class="card"><!----><!---->
         <div tabindex="0" aria-label="Loading" class="vld-overlay is-active" style="display: none;">

@@ -3,6 +3,9 @@
 namespace common\models;
 
 use Yii;
+use yii\behaviors\BlameableBehavior;
+use yii\behaviors\TimestampBehavior;
+use yii\db\ActiveRecord;
 
 /**
  * This is the model class for table "documents".
@@ -22,7 +25,7 @@ use Yii;
  * @property int $created_by
  * @property int $updated_by
  */
-class Documents extends \yii\db\ActiveRecord
+class Documents extends ActiveRecord
 {
     /**
      * {@inheritdoc}
@@ -32,17 +35,42 @@ class Documents extends \yii\db\ActiveRecord
         return 'documents';
     }
 
+    public function behaviors()
+    {
+        return [
+            'slug' => [
+                'class' => 'Zelenin\yii\behaviors\Slug',
+                'slugAttribute' => 'slug',
+                'attribute' => 'name',
+                'ensureUnique' => true,
+                'replacement' => '_',
+                'lowercase' => true,
+                'immutable' => false,
+            ],
+            BlameableBehavior::class,
+            [
+                'class' => TimestampBehavior::class,
+                'createdAtAttribute' => 'created_at',
+                'updatedAtAttribute' => 'updated_at',
+                'value' => date('Y-m-d H:i:s'),
+            ]
+        ];
+
+    }
     /**
      * {@inheritdoc}
      */
     public function rules()
     {
         return [
-            [['slug', 'name', 'category_id', 'subject_id'], 'required'],
+            [[ 'name', 'category_id', 'subject_id'], 'required'],
             [['downloads', 'views', 'status', 'category_id', 'subject_id', 'created_by', 'updated_by'], 'default', 'value' => null],
             [['downloads', 'views', 'status', 'category_id', 'subject_id', 'created_by', 'updated_by'], 'integer'],
+            [['file','image'],'default','value'=>''],
             [['created_at', 'updated_at'], 'safe'],
             [['slug', 'name', 'file', 'image'], 'string', 'max' => 255],
+            [['slug'], 'unique'],
+            [['views','downloads'],'default','value'=>0],
         ];
     }
 
