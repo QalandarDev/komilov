@@ -11,12 +11,12 @@ use yii\helpers\Html;
 use yii\web\View;
 
 ?>
-<div class="card list-group border-primary">
+<div class="card list-group border-primary category-nav-item">
     <?php foreach ($categories as $category) {
-        $class=(Yii::$app->request->get('category')==$category->slug)?'list-group-item text-center list-group-item-action active':'list-group-item text-center list-group-item-action';
+        $class = (Yii::$app->request->get('category') == $category->slug) ? 'list-group-item text-left list-group-item-action active' : 'list-group-item text-left list-group-item-action';
         echo Html::a(
             $category->name_uz
-            .' <span class="badge rounded-pill bg-success">'.$category->getDocuments()->count().'</span>',
+            . ' <span class="badge rounded-pill bg-success" >' . $category->getDocuments()->count() . '</span>',
             ['site/index', 'category' => $category->slug],
             ['class' => $class]
         );
@@ -25,7 +25,7 @@ use yii\web\View;
     <?= Html::a(
         Yii::t('app', 'All'),
         ['site/index'],
-        ['class' => 'list-group-item text-center list-group-item-action'.(Yii::$app->request->get('category')==null?' active':'')]
+        ['class' => 'list-group-item text-left list-group-item-action' . (Yii::$app->request->get('category') == null ? ' active' : '')]
     ) ?>
 
 </div>

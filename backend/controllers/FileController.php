@@ -4,9 +4,11 @@ namespace backend\controllers;
 
 use common\models\Documents;
 use backend\models\DocumentsSearch;
+use Yii;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
 use yii\filters\VerbFilter;
+use yii\web\UploadedFile;
 
 /**
  * FileController implements the CRUD actions for Documents model.
@@ -69,8 +71,10 @@ class FileController extends Controller
     {
         $model = new Documents();
 
-        if ($this->request->isPost) {
-            if ($model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $model->saveFile();
+            $model->saveImage();
+            if ($model->save()) {
                 return $this->redirect(['view', 'id' => $model->id]);
             }
         } else {
@@ -92,9 +96,14 @@ class FileController extends Controller
     public function actionUpdate($id)
     {
         $model = $this->findModel($id);
-
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
-            return $this->redirect(['view', 'id' => $model->id]);
+        $file = $model->file;
+        $image = $model->image;
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $model->saveFile($file);
+            $model->saveImage($image);
+            if ($model->save()) {
+                return $this->redirect(['view', 'id' => $model->id]);
+            }
         }
 
         return $this->render('update', [

@@ -29,20 +29,31 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
-            'id',
             'slug',
             'name',
-            'file',
+            [
+                'attribute' => 'file',
+                'format' => 'raw',
+                'value' => function ($model) {
+                    return Html::a($model->file, ['../site/download', 'slug' => $model->slug]);
+                }
+            ],
             'image',
-            'downloads',
-            'views',
+            'downloads:integer',
+            'views:integer',
             'status',
-            'category_id',
-            'subject_id',
+            [
+                'attribute' => 'category_id',
+                'label' => 'Category',
+                'value' => $model->category->name_uz,
+            ],
+            [
+                'attribute' => 'subject_id',
+                'value' => $model->subject->name_uz,
+                'label' => 'Subject',
+            ],
             'created_at',
             'updated_at',
-            'created_by',
-            'updated_by',
         ],
     ]) ?>
 

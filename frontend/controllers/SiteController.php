@@ -2,6 +2,7 @@
 
 namespace frontend\controllers;
 
+use common\models\Documents;
 use frontend\models\ResendVerificationEmailForm;
 use frontend\models\VerifyEmailForm;
 use Yii;
@@ -87,7 +88,7 @@ class SiteController extends Controller
      */
     public function actionLogin()
     {
-        $this->layout='login';
+        $this->layout = 'login';
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
@@ -220,8 +221,8 @@ class SiteController extends Controller
      * Verify email address
      *
      * @param string $token
-     * @throws BadRequestHttpException
      * @return yii\web\Response
+     * @throws BadRequestHttpException
      */
     public function actionVerifyEmail($token)
     {
@@ -258,5 +259,17 @@ class SiteController extends Controller
         return $this->render('resendVerificationEmail', [
             'model' => $model
         ]);
+    }
+
+    public function actionDownload(string $slug)
+    {
+        $model = Documents::find()->where(['slug' => $slug])->one();
+        $file = $model->getFile();
+        if (file_exists($file)) {
+            //streaming file
+            return Yii::$app->response->sendFile($file, $model->name, ['inline' => true]);
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
     }
 }
