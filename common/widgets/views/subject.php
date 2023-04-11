@@ -3,6 +3,7 @@
 
 /**
  * @var $subjects Subjects[]|array|ActiveRecord[]
+ * @var $category string
  */
 
 use common\models\Category;
@@ -11,6 +12,8 @@ use common\models\Subjects;
 use yii\bootstrap5\Html;
 use yii\db\ActiveRecord;
 
+$this->title =Category::name($category);
+$this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="card-body d-none d-sm-block">
     <div class="row ">
@@ -29,7 +32,7 @@ use yii\db\ActiveRecord;
 
                 echo Html::a(
                     $subject->name_uz.$badge,
-                    ['site/index',
+                    ['site/list',
                         'subject' => $subject->slug,
                         'category' => Yii::$app->request->get('category')
                     ],

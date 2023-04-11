@@ -138,7 +138,7 @@ class Documents extends ActiveRecord
         $this->file = $this->file->baseName . '.' . $this->file->extension;
     }
 
-    final public function getFile(): string
+    final public function getDownloadFile(): string
     {
         $model = Documents::findOne($this->id);
         $model->downloads++;

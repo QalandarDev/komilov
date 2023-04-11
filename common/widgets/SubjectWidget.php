@@ -8,12 +8,18 @@ use yii\bootstrap5\Widget;
 
 final class SubjectWidget extends Widget
 {
-    public function run()
+
+    public string $category='';
+    /**
+     * @return string
+     */
+    final public function run():string
     {
         $subjects = Subjects::find()->all();
         return $this->render('subject',
             [
                 'subjects' => $subjects,
+                'category' => $this->category,
             ]);
     }
 }

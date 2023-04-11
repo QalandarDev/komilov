@@ -56,4 +56,13 @@ class Subjects extends \yii\db\ActiveRecord
             'updated_by' => 'Updated By',
         ];
     }
+
+    public static function name(string $slug): ?string
+    {
+        $model = self::findOne(['slug' => $slug]);
+        if ($model instanceof self) {
+            return $model->name_uz;
+        }
+        return null;
+    }
 }

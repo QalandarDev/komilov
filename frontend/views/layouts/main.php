@@ -7,6 +7,7 @@
 use common\widgets\Alert;
 use common\widgets\CategoryWidget;
 use common\widgets\LoginWidget;
+use common\widgets\SubjectWidget;
 use frontend\assets\AppAsset;
 use yii\bootstrap5\Breadcrumbs;
 use yii\bootstrap5\Html;
@@ -94,6 +95,7 @@ AppAsset::register($this);
                         <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]) ?>
                     <?php endif ?>
                 </section>
+
                 <?= $content ?>
             </div>
         </div>

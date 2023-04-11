@@ -9,9 +9,11 @@ final class CategoryWidget extends Widget
 {
     public function run(): string
     {
+        $requestCategory = \Yii::$app->request->get('category');
         $categories = Category::find()->all();
         return $this->render('category', [
-            'categories' => $categories
+            'categories' => $categories,
+            'requestCategory' => $requestCategory ?? 'all'
         ]);
     }
 }
