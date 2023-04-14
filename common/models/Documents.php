@@ -6,6 +6,7 @@ use Yii;
 use yii\behaviors\BlameableBehavior;
 use yii\behaviors\TimestampBehavior;
 use yii\db\ActiveRecord;
+use yii\helpers\Url;
 use yii\web\UploadedFile;
 
 /**
@@ -18,7 +19,6 @@ use yii\web\UploadedFile;
  * @property string $image
  * @property int $downloads
  * @property int $views
- * @property int $status
  * @property int $category_id
  * @property int $subject_id
  * @property string $created_at
@@ -26,7 +26,18 @@ use yii\web\UploadedFile;
  * @property int $created_by
  * @property-read Category $category
  * @property-read Subjects $subject
+ * @property-read string $uploadTime
+ * @property-read string $downloadFile
+ * @property-read string $fileSize
+ * @property-read string $imageFile
+ * @property-read string $imageLink
+ * @property-read string $fileLink
+ * @property-read string $fileName
  * @property int $updated_by
+ * @property float $price
+ * @property-read mixed $imageAdminLink
+ * @property-read string $fileAdminLink
+ * @property bool $status
  */
 class Documents extends ActiveRecord
 {
@@ -73,11 +84,12 @@ class Documents extends ActiveRecord
     public function rules()
     {
         return [
-            [['name', 'category_id', 'subject_id'], 'required'],
-            [['downloads', 'views', 'status', 'category_id', 'subject_id', 'created_by', 'updated_by'], 'default', 'value' => null],
-            [['downloads', 'views', 'status', 'category_id', 'subject_id', 'created_by', 'updated_by'], 'integer'],
-            [['image'], 'default', 'value' => ''],
+            [['slug', 'name', 'category_id', 'subject_id'], 'required'],
+            [['downloads', 'views', 'category_id', 'subject_id', 'created_by', 'updated_by'], 'default', 'value' => null],
+            [['downloads', 'views', 'category_id', 'subject_id', 'created_by', 'updated_by'], 'integer'],
             [['created_at', 'updated_at'], 'safe'],
+            [['price'], 'number'],
+            [['status'], 'boolean'],
             [['slug', 'name', 'file', 'image'], 'string', 'max' => 255],
             [['slug'], 'unique'],
             [['views', 'downloads'], 'default', 'value' => 0],
@@ -87,7 +99,7 @@ class Documents extends ActiveRecord
     /**
      * {@inheritdoc}
      */
-    public function attributeLabels()
+    final public function attributeLabels(): array
     {
         return [
             'id' => 'ID',
@@ -117,7 +129,7 @@ class Documents extends ActiveRecord
         return $this->hasOne(Subjects::class, ['id' => 'subject_id']);
     }
 
-    final public function saveFile(string $default=null): void
+    final public function saveFile(string $default = null): void
     {
 
         //get uploaded file instance
@@ -138,16 +150,44 @@ class Documents extends ActiveRecord
         $this->file = $this->file->baseName . '.' . $this->file->extension;
     }
 
-    final public function getDownloadFile(): string
+    final public function getDownloadFile(bool $download = false): string
     {
         $model = Documents::findOne($this->id);
-        $model->downloads++;
+        if ($download) $model->downloads++;
         $model->save();
         return Yii::getAlias('@file') . '/' . $this->category->slug . '/' . $this->subject->slug . '/' . date('Y_m') . '/' . $this->file;
 
     }
 
-    final public function saveImage(string $default=null): void
+    final public function getFileLink(): string
+    {
+        return Url::to(['site/download', 'slug' => $this->slug]);
+    }
+    final public function getFileAdminLink():string{
+        return Url::to(['../site/download', 'slug' => $this->slug],true);
+    }
+
+    final public function getFileName(): string
+    {
+        $file = Yii::getAlias('@file') . '/' . $this->category->slug . '/' . $this->subject->slug . '/' . date('Y_m') . '/' . $this->file;
+        return basename($file);
+    }
+
+    final public function getImageFile(): string
+    {
+        return Yii::getAlias('@image') . '/' . $this->category->slug . '/' . $this->subject->slug . '/' . date('Y_m') . '/' . $this->image;
+    }
+
+    final public function getImageLink(): string
+    {
+        return Url::to(['site/image', 'slug' => $this->slug]);
+    }
+    final public function getImageAdminLink():string{
+        return Url::to(['../site/image', 'slug' => $this->slug]);
+    }
+
+
+    final public function saveImage(string $default = null): void
     {
         //get uploaded file instance
         if (UploadedFile::getInstance($this, 'image') === null) {
@@ -163,5 +203,15 @@ class Documents extends ActiveRecord
         $this->image->saveAs($dir . '/' . $this->image->baseName . '.' . $this->image->extension);
         //encrypt file name
         $this->image = $this->image->baseName . '.' . $this->image->extension;
+    }
+
+    final protected function getUploadTime(): string
+    {
+        return date('d.m.Y', strtotime($this->created_at));
+    }
+
+    final protected function getFileSize(): string
+    {
+        return Yii::$app->formatter->asShortSize(filesize(Yii::getAlias('@file') . '/' . $this->category->slug . '/' . $this->subject->slug . '/' . date('Y_m') . '/' . $this->file));
     }
 }

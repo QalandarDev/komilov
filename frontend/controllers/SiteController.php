@@ -14,6 +14,7 @@ use common\models\LoginForm;
 use yii\web\ErrorAction;
 use yii\web\NotFoundHttpException;
 use yii\web\Request;
+use yii\web\Response;
 
 /**
  * Site controller
@@ -121,13 +122,15 @@ class SiteController extends Controller
     /**
      * @throws NotFoundHttpException
      */
-    public function actionDownload(string $slug)
+    final public function actionDownload(string $slug): Response
     {
         $model = Documents::find()->where(['slug' => $slug])->one();
-        $file = $model->getDownloadFile();
+        if(!$model instanceof Documents) {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+        $file = $model->getDownloadFile(true);
         if (file_exists($file)) {
-            //streaming file
-            return Yii::$app->response->sendFile($file, $model->name, ['inline' => true]);
+            return Yii::$app->response->sendFile($file, $model->fileName, ['inline' => true]);
         } else {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
@@ -165,6 +168,21 @@ class SiteController extends Controller
         ]);
     }
 
+    /**
+     * @throws NotFoundHttpException
+     */
+    final public function actionImage(string $slug): Response
+    {
+        $model = Documents::find()->where(['slug' => $slug])->one();
+        $file = $model->imageFile;
+        if (file_exists($file)) {
+            //streaming file
+            return Yii::$app->response->sendFile($file, $model->name, ['inline' => true]);
+        } else {
+            throw new NotFoundHttpException('The requested page does not exist.');
+        }
+    }
+
     private function isCategoryExist(string $category): bool
     {
         return Category::findOne(['slug' => $category]) instanceof Category;
@@ -174,4 +192,5 @@ class SiteController extends Controller
     {
         return Subjects::findOne(['slug' => $subject]) instanceof Subjects;
     }
+
 }

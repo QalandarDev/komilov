@@ -7,4 +7,10 @@ return [
     'user.passwordResetTokenExpire' => 3600,
     'user.passwordMinLength' => 8,
     'bsVersion' => '5.x',
+    'format' => [
+        'date' => 'php:d.m.Y',
+        'datetime' => 'php:d.m.Y H:i:s',
+        'time' => 'php:H:i:s',
+
+    ],
 ];

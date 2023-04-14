@@ -12,5 +12,14 @@ return [
         'cache' => [
             'class' => FileCache::class,
         ],
+        'formatter'=>[
+            'currencyCode'=>'UZS',
+            'decimalSeparator'=>'.',
+            'thousandSeparator'=>',',
+            'numberFormatterOptions'=>[
+                NumberFormatter::MIN_FRACTION_DIGITS => 0,
+                NumberFormatter::MAX_FRACTION_DIGITS => 0,
+            ],
+        ]
     ],
 ];

@@ -10,7 +10,7 @@ use common\models\Category;
 use yii\db\ActiveRecord;
 use yii\helpers\Html;
 use yii\web\View;
-$isAll = ($requestCategory == 'all')? 'active' : '';
+$isAll = ($requestCategory == 'all')? ' active' : '';
 ?>
 <div class="card list-group border-primary category-nav-item">
     <?php foreach ($categories as $category) {
