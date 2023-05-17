@@ -4,15 +4,22 @@ namespace common\widgets;
 
 
 use common\models\LoginForm;
+use Yii;
 use yii\bootstrap5\Widget;
 
 class LoginWidget extends Widget
 {
-    public function run()
+    final public function run(): string
     {
-        $model = new LoginForm();
-        return $this->render('login', [
-            'model' => $model
-        ]);
+        if (Yii::$app->user->isGuest) {
+            $model = new LoginForm();
+            return $this->render('login', [
+                'model' => $model
+            ]);
+        } else {
+            return $this->render('profile', [
+                'model' => Yii::$app->user->identity
+            ]);
+        }
     }
 }

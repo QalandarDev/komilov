@@ -26,10 +26,10 @@ $this->params['breadcrumbs'][] = $this->title;
                 </p>
                 <h5><?= $model->uploadTime ?></h5>
             </div>
-            <div class="col-md-3 col-sm-6">
+            <div class="col-md-2 col-sm-6">
                 <p class="mb-1">
                     <i class="fas fa-download text-success"></i>
-                    Ko'chirishlar soni:
+                    Ko'chirishlar:
                 </p>
                 <h5>
                     <?= $model->downloads ?>
@@ -44,12 +44,21 @@ $this->params['breadcrumbs'][] = $this->title;
                     <?= $model->fileSize ?>
                 </h5>
             </div>
-            <div class="col-md-4 col-sm-6" style="text-align: center;">
+            <div class="col-md-2 col-sm-6">
+                <p class="mb-1">
+                    <i class="fas fa-tag text-info"></i>
+                    Narxi:
+                </p>
+                <div class="product-price h5">
+                    <?= Yii::$app->formatter->asDecimal($model->price) ?>
+                </div>
+            </div>
+            <div class="col-md-3 col-sm-6">
                 <a target="_self"
                    href="<?= $model->fileLink ?>"
-                   class="btn mt-1 btn-info btn-block">
-                    <i class="fas fa-download text-white"></i>
-                    Sotib olish <br><?= Yii::$app->formatter->asDecimal($model->price) ?> UZS
+                   class="btn btn-info btn-block text-white">
+                    <i class="fas fa-download "></i>
+                    Yuklab olish
                 </a>
             </div>
         </div>

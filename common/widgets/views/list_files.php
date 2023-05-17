@@ -10,7 +10,6 @@ use common\models\Documents;
 use common\models\Subjects;
 use yii\data\ArrayDataProvider;
 use yii\helpers\Url;
-use yii\web\NotFoundHttpException;
 use yii\web\View;
 
 $files = Documents::find()

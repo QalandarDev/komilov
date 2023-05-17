@@ -11,6 +11,7 @@ use yii\web\View;
 ?>
 <div class="card user-panel border-danger unauthorized mb-3">
     <?php $form = ActiveForm::begin([
+        'action' => ['/site/login'],
         'id' => 'login-form',
         'layout' => 'horizontal',
         'validateOnBlur' => false,
@@ -24,6 +25,7 @@ use yii\web\View;
     <?= $form->field($model, 'password')->passwordInput(['placeholder' => 'Password']) ?>
     <div class="d-grid gap-2 p-2">
         <?= Html::submitButton('Login', ['class' => 'btn btn-block btn-danger text-center', 'name' => 'login-button']) ?>
+        <?= Html::a('SignUp', ['/site/signup'], ['class' => 'btn btn-block btn-success text-center']) ?>
     </div>
 
     <?php ActiveForm::end(); ?>

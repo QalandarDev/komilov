@@ -29,57 +29,21 @@ AppAsset::register($this);
 <body class="d-flex flex-column h-100">
 <?php $this->beginBody() ?>
 
-<header>
-    <?php
-    NavBar::begin([
-        'brandLabel' => Yii::$app->name,
-        'brandUrl' => Yii::$app->homeUrl,
-        'options' => [
-            'class' => 'navbar navbar-expand-md navbar-dark bg-dark fixed-top',
-        ],
-    ]);
-    $menuItems = [
-        ['label' => 'Home', 'url' => ['/site/index']],
-        ['label' => 'About', 'url' => ['/site/about']],
-        ['label' => 'Contact', 'url' => ['/site/contact']],
-    ];
-    if (Yii::$app->user->isGuest) {
-        $menuItems[] = ['label' => 'Signup', 'url' => ['/site/signup']];
-    }
-
-    echo Nav::widget([
-        'options' => ['class' => 'navbar-nav me-auto mb-2 mb-md-0'],
-        'items' => $menuItems,
-    ]);
-    if (Yii::$app->user->isGuest) {
-        echo Html::tag('div', Html::a('Login', ['/site/login'], ['class' => ['btn btn-link login text-decoration-none']]), ['class' => ['d-flex']]);
-    } else {
-        echo Html::beginForm(['/site/logout'], 'post', ['class' => 'd-flex'])
-            . Html::submitButton(
-                'Logout (' . Yii::$app->user->identity->username . ')',
-                ['class' => 'btn btn-link logout text-decoration-none']
-            )
-            . Html::endForm();
-    }
-    NavBar::end();
-    ?>
-</header>
-
 <main id="main" class="flex-shrink-0" role="main">
     <div class="container">
+        <?= Alert::widget() ?>
         <div class="row">
             <div class="col-lg-12">
                 <div id="rtb-top"></div>
             </div>
             <aside class="col-lg-3">
-                <?php if (Yii::$app->user->isGuest): ?>
-                    <?php try {
-                        echo LoginWidget::widget();
-                    } catch (Throwable $e) {
-                        echo $e->getMessage();
-                    } ?>
-                <?php endif; ?>
-
+                <!--                Login/Profile widget        -->
+                <?php try {
+                    echo LoginWidget::widget();
+                } catch (Throwable $e) {
+                    echo $e->getMessage();
+                } ?>
+                <!--                Category widget              -->
                 <?php
                 try {
                     echo CategoryWidget::widget();
@@ -90,16 +54,20 @@ AppAsset::register($this);
                 <div id="rtb-side"></div>
             </aside>
             <div class="col-lg-9">
+                <!--                Breadcrumbs section         -->
                 <section class="main-breadcrumb p-1">
                     <?php if (!empty($this->params['breadcrumbs'])): ?>
-                        <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]) ?>
+                        <?php try {
+                            echo Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]);
+                        } catch (Throwable $e) {
+                        } ?>
                     <?php endif ?>
                 </section>
-
+                <!--                Content Section              -->
                 <?= $content ?>
             </div>
         </div>
-        <?= Alert::widget() ?>
+
     </div>
 </main>
 

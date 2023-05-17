@@ -12,7 +12,7 @@ class InitController extends Controller
     /**
      * @throws Exception
      */
-    public function actionIndex(string $password)
+    final public function actionIndex(string $password): void
     {
         $model = new Admin();
         $model->username = 'admin';

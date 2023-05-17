@@ -74,7 +74,7 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionIndex(Request $request)
+    final public function actionIndex(Request $request): string
     {
         $category = $request->get('category') ?? '';
         return $this->render('index', [
@@ -87,21 +87,29 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionLogin()
+    final public function actionLogin(): Response|string
     {
-        $this->layout = 'login';
         if (!Yii::$app->user->isGuest) {
             return $this->goHome();
         }
-
         $model = new LoginForm();
         if ($model->load(Yii::$app->request->post()) && $model->login()) {
             return $this->goBack();
+        } else {
+            Yii::$app->session->setFlash('error', 'Incorrect username or password.');
+            return $this->goHome();
         }
 
-        $model->password = '';
+    }
 
-        return $this->render('login', [
+    final public function actionSignup(): Response|string
+    {
+        $model = new \frontend\models\SignupForm();
+        if ($model->load(Yii::$app->request->post()) && $model->signup()) {
+            Yii::$app->session->setFlash('success', 'You have successfully registered');
+            return $this->redirect(['login']);
+        }
+        return $this->render('signup', [
             'model' => $model,
         ]);
     }
@@ -111,7 +119,7 @@ class SiteController extends Controller
      *
      * @return mixed
      */
-    public function actionLogout()
+    final public function actionLogout(): Response|string
     {
         Yii::$app->user->logout();
 
@@ -125,7 +133,7 @@ class SiteController extends Controller
     final public function actionDownload(string $slug): Response
     {
         $model = Documents::find()->where(['slug' => $slug])->one();
-        if(!$model instanceof Documents) {
+        if (!$model instanceof Documents) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
         $file = $model->getDownloadFile(true);
@@ -191,6 +199,14 @@ class SiteController extends Controller
     private function isSubjectExist(string $subject): bool
     {
         return Subjects::findOne(['slug' => $subject]) instanceof Subjects;
+    }
+
+    final public function actionBalance(): string
+    {
+        $user = Yii::$app->user->identity;
+        return $this->render('balance',[
+            'user' => $user,
+        ]);
     }
 
 }
