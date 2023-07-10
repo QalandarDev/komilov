@@ -5,6 +5,7 @@ namespace frontend\controllers;
 use common\models\Category;
 use common\models\Documents;
 use common\models\Subjects;
+use common\models\User;
 use Yii;
 use yii\captcha\CaptchaAction;
 use yii\web\Controller;
@@ -132,15 +133,32 @@ class SiteController extends Controller
      */
     final public function actionDownload(string $slug): Response
     {
+        $user = Yii::$app->user->identity;
         $model = Documents::find()->where(['slug' => $slug])->one();
         if (!$model instanceof Documents) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
         $file = $model->getDownloadFile(true);
         if (file_exists($file)) {
-            return Yii::$app->response->sendFile($file, $model->fileName, ['inline' => true]);
-        } else {
-            throw new NotFoundHttpException('The requested page does not exist.');
+            if ($user->balance > $model->price) {
+                $user->balance -= $model->price;
+                $user->save();
+                $model->save();
+                $transaction = new \common\models\Transaction();
+                $transaction->from =(string) $user->id;
+                $transaction->to = 'admin';
+                $transaction->message = $model->fileName . ' Downloaded';
+                $transaction->cost = $model->price;
+                $transaction->time = (new \DateTime())->format('Y-m-d H:i:s');
+                if ($transaction->save()) {
+                    Yii::$app->session->setFlash('success', 'You have successfully downloaded the file');
+                } else {
+                    dd($transaction->errors);
+                }
+                return Yii::$app->response->sendFile($file, $model->fileName, ['inline' => true]);
+            } else {
+                throw new NotFoundHttpException('The requested page does not exist.');
+            }
         }
     }
 
@@ -204,8 +222,10 @@ class SiteController extends Controller
     final public function actionBalance(): string
     {
         $user = Yii::$app->user->identity;
-        return $this->render('balance',[
+        $transactions = User::getTransaction($user->id);
+        return $this->render('balance', [
             'user' => $user,
+            'transactions' => $transactions,
         ]);
     }
 
