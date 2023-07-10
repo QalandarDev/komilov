@@ -4,10 +4,12 @@ namespace frontend\controllers;
 
 use common\models\Category;
 use common\models\Documents;
+use common\models\MyFiles;
 use common\models\Subjects;
 use common\models\User;
 use Yii;
 use yii\captcha\CaptchaAction;
+use yii\helpers\ArrayHelper;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\filters\AccessControl;
@@ -140,26 +142,13 @@ class SiteController extends Controller
         }
         $file = $model->getDownloadFile(true);
         if (file_exists($file)) {
-            if ($user->balance > $model->price) {
-                $user->balance -= $model->price;
-                $user->save();
-                $model->save();
-                $transaction = new \common\models\Transaction();
-                $transaction->from =(string) $user->id;
-                $transaction->to = 'admin';
-                $transaction->message = $model->fileName . ' Downloaded';
-                $transaction->cost = $model->price;
-                $transaction->time = (new \DateTime())->format('Y-m-d H:i:s');
-                if ($transaction->save()) {
-                    Yii::$app->session->setFlash('success', 'You have successfully downloaded the file');
-                } else {
-                    dd($transaction->errors);
-                }
+            if ($model->buy($user)) {
                 return Yii::$app->response->sendFile($file, $model->fileName, ['inline' => true]);
             } else {
                 throw new NotFoundHttpException('The requested page does not exist.');
             }
         }
+        throw new NotFoundHttpException('The requested page does not exist.');
     }
 
     /**
@@ -167,6 +156,7 @@ class SiteController extends Controller
      */
     final public function actionView(string $slug): string
     {
+        $slug=strtolower($slug);
         $model = Documents::find()->where(['slug' => $slug])->one();
         $file = $model->getDownloadFile();
         if (file_exists($file)) {
@@ -229,4 +219,13 @@ class SiteController extends Controller
         ]);
     }
 
+    final public function actionFiles(): string
+    {
+        $user = Yii::$app->user->identity;
+        $files = MyFiles::find()->select(['file_id'])->where(['user_id' => $user->id])->asArray()->column();
+        $files = Documents::find()->where(['id' => $files])->asArray()->all();
+        return $this->render('files', [
+            'files' => $files,
+        ]);
+    }
 }
