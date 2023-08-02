@@ -156,7 +156,7 @@ class SiteController extends Controller
      */
     final public function actionView(string $slug): string
     {
-        $slug=strtolower($slug);
+        $slug = strtolower($slug);
         $model = Documents::find()->where(['slug' => $slug])->one();
         $file = $model->getDownloadFile();
         if (file_exists($file)) {
@@ -226,6 +226,14 @@ class SiteController extends Controller
         $files = Documents::find()->where(['id' => $files])->asArray()->all();
         return $this->render('files', [
             'files' => $files,
+        ]);
+    }
+
+    final public function actionProfile(): string
+    {
+        $user = Yii::$app->user->identity;
+        return $this->render('profile', [
+            'user' => $user,
         ]);
     }
 }
