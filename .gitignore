@@ -45,3 +45,4 @@ phpunit.phar
 # ignore specific files
 /files
 /images
+composer.lock

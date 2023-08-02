@@ -15,13 +15,7 @@ $url = Yii::$app->request->url;
         </span>
     </div>
     <div class="list-group user-actions list-group-flush">
-        <?=
-        Html::a(
-            '<i class="far fa-cog"></i> Sozlamalar',
-            ['/site/profile'],
-            ['class' => ($url==='/site/profile')?'list-group-item  bg-warning':'list-group-item ', 'target' => '_self']
-        )
-        ?>
+
         <?=
         Html::a(
             '<i class="far fa-file-alt"></i> Mening Fayllarim',

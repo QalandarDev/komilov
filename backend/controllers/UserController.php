@@ -2,6 +2,7 @@
 
 namespace backend\controllers;
 
+use common\models\Transaction;
 use common\models\User;
 use backend\models\UserSearch;
 use yii\web\Controller;
@@ -93,8 +94,17 @@ class UserController extends Controller
     {
         $model = $this->findModel($id);
 
-        dd($model);
-        if ($this->request->isPost && $model->load($this->request->post()) && $model->save()) {
+        if ($this->request->isPost && $model->load($this->request->post())) {
+            $transaction = new Transaction();
+            $transaction->from = (string)\Yii::$app->user->id;
+            $transaction->to = (string)$model->id;
+            $transaction->cost = $model->balance - $model->getOldAttribute('balance');
+            $transaction->time = (new \DateTime())->format('Y-m-d H:i:s');
+            $transaction->message= 'Balans o\'zgartirildi';
+            if (!$transaction->save()) {
+                dd($transaction->errors);
+            }
+            $model->save();
             return $this->redirect(['view', 'id' => $model->id]);
         }
 

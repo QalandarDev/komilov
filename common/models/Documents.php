@@ -163,8 +163,10 @@ class Documents extends ActiveRecord
     {
         return Url::to(['site/download', 'slug' => $this->slug]);
     }
-    final public function getFileAdminLink():string{
-        return Url::to(['../site/download', 'slug' => $this->slug],true);
+
+    final public function getFileAdminLink(): string
+    {
+        return Url::to(['../site/download', 'slug' => $this->slug], true);
     }
 
     final public function getFileName(): string
@@ -182,7 +184,9 @@ class Documents extends ActiveRecord
     {
         return Url::to(['site/image', 'slug' => $this->slug]);
     }
-    final public function getImageAdminLink():string{
+
+    final public function getImageAdminLink(): string
+    {
         return Url::to(['../site/image', 'slug' => $this->slug]);
     }
 
@@ -203,6 +207,39 @@ class Documents extends ActiveRecord
         $this->image->saveAs($dir . '/' . $this->image->baseName . '.' . $this->image->extension);
         //encrypt file name
         $this->image = $this->image->baseName . '.' . $this->image->extension;
+    }
+
+    public function buy(\app\models\User|\yii\web\IdentityInterface|null $user)
+    {
+        if ($user === null) {
+            return false;
+        }
+        if ($user->balance < $this->price) {
+            return false;
+        }
+        if (MyFiles::findOne(['user_id' => $user->id, 'file_id' => $this->id]) !== null) {
+            return true;
+        }
+        $myFile = new MyFiles();
+        $myFile->user_id = $user->id;
+        $myFile->file_id = $this->id;
+        $myFile->save();
+        $user->balance -= $this->price;
+        $user->save();
+        $this->downloads++;
+        $this->save();
+        $transaction = new \common\models\Transaction();
+        $transaction->from = 'admin';
+        $transaction->to = (string)$user->id;
+        $transaction->message = "Fayl xarid qilindi: [{$this->name}]\t\t\t";
+        $transaction->cost = -$this->price;
+        $transaction->time = (new \DateTime())->format('Y-m-d H:i:s');
+        if ($transaction->save()) {
+            Yii::$app->session->setFlash('success', 'You have successfully downloaded the file');
+        } else {
+            dd($transaction->errors);
+        }
+        return true;
     }
 
     final protected function getUploadTime(): string

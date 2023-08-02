@@ -41,6 +41,11 @@ class User extends ActiveRecord implements IdentityInterface
         return '{{%user}}';
     }
 
+    public static function getTransaction($id)
+    {
+        return Transaction::find()->where(['to' => $id])->orderBy(['id'=>SORT_DESC])->all();
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -230,5 +235,8 @@ class User extends ActiveRecord implements IdentityInterface
     public function getstatusName()
     {
         return $this->status == self::STATUS_ACTIVE ? 'Active' : 'Inactive';
+    }
+    public function balanceAsDecimal(){
+        return Yii::$app->formatter->asDecimal($this->balance, 0);
     }
 }
