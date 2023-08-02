@@ -136,6 +136,7 @@ class SiteController extends Controller
     final public function actionDownload(string $slug): Response
     {
         $user = Yii::$app->user->identity;
+        $slug = strtolower($slug);
         $model = Documents::find()->where(['slug' => $slug])->one();
         if (!$model instanceof Documents) {
             throw new NotFoundHttpException('The requested page does not exist.');
