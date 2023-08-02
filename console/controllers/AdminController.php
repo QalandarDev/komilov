@@ -7,7 +7,7 @@ use Yii;
 use yii\base\Exception;
 use yii\console\Controller;
 
-class InitController extends Controller
+class AdminController extends Controller
 {
     /**
      * @throws Exception

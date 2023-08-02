@@ -21,7 +21,7 @@ class m230414_065737_alter_documents_table extends Migration
         $this->alterColumn('documents', 'updated_by', $this->integer()->unsigned()->notNull()->defaultExpression(1));
         $this->addColumn('documents', 'price', $this->double()->unsigned()->notNull()->defaultExpression(0));
         // add column status with boolean type
-        $this->addColumn('documents', 'status', $this->boolean()->notNull()->defaultValue(true));
+//        $this->addColumn('documents', 'status', $this->boolean()->notNull()->defaultValue(true));
 
     }
 
