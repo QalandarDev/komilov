@@ -16,6 +16,11 @@ return [
     'bootstrap' => ['log'],
     'controllerNamespace' => 'frontend\controllers',
     'homeUrl' => '/',
+    'container' => [
+        'definitions' => [
+            'yii\widgets\LinkPager' => 'yii\bootstrap5\LinkPager'
+        ]
+    ],
     'components' => [
         'request' => [
             'csrfParam' => '_csrf-frontend',
