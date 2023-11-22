@@ -136,20 +136,21 @@ class SiteController extends Controller
     final public function actionDownload(string $slug): Response
     {
         $user = Yii::$app->user->identity;
-        $slug = strtolower($slug);
+        $slug = str_replace([' ','+','-'],'_',strtolower($slug));
         $model = Documents::find()->where(['slug' => $slug])->one();
         if (!$model instanceof Documents) {
             throw new NotFoundHttpException('The requested page does not exist.');
         }
         $file = $model->getDownloadFile(true);
+        //dd($model->attributes,$file);
         if (file_exists($file)) {
             if ($model->buy($user)) {
                 return Yii::$app->response->sendFile($file, $model->fileName, ['inline' => true]);
             } else {
-                throw new NotFoundHttpException('The requested page does not exist.');
+                return $this->redirect(['/site/balance']);
             }
         }
-        throw new NotFoundHttpException('The requested page does not exist.');
+        throw new NotFoundHttpException('The requested page does not exist.1');
     }
 
     /**
@@ -157,7 +158,7 @@ class SiteController extends Controller
      */
     final public function actionView(string $slug): string
     {
-        $slug = strtolower($slug);
+        $slug = str_replace(['-','+',' '],'_',strtolower($slug));
         $model = Documents::find()->where(['slug' => $slug])->one();
         $file = $model->getDownloadFile();
         if (file_exists($file)) {

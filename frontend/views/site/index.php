@@ -9,7 +9,7 @@ use common\widgets\SubjectWidget;
 ?>
 
 <div class="card subjects-navigation">
-    <div class="card-body d-none d-sm-block">
+    <div class="card-body d-sm-block">
         <div class="row">
             <?php try {
                 echo SubjectWidget::widget(

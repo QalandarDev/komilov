@@ -33,8 +33,8 @@ use yii\web\View;
 </style>
 <div class="card">
     <div class="card-header">
-        <span class="text-left">Joriy Balans</span>
-        <span class="balance-currency" style="float: right"><?= $user->balanceAsDecimal() ?> UZS</span>
+        <span class="text-left">Joriy Balans Hisobni to'ldirish uchun Telegram orqali <a style="color:yellow; border: 2px solid white" href='https://texnolog2021.t.me'>@texnolog2021</a></span>
+        <span class="balance-currency" style="float: right;"><?= $user->balanceAsDecimal() ?> UZS</span>
     </div>
     <div class="card-body">
         <ul class="list-group">

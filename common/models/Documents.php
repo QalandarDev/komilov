@@ -155,7 +155,7 @@ class Documents extends ActiveRecord
         $model = Documents::findOne($this->id);
         if ($download) $model->downloads++;
         $model->save();
-        return Yii::getAlias('@file') . '/' . $this->category->slug . '/' . $this->subject->slug . '/' . date('Y_m') . '/' . $this->file;
+        return Yii::getAlias('@file') . '/' . $this->category->slug . '/' . $this->subject->slug . '/' . date('Y_m',strtotime($model->created_at)) . '/' . $this->file;
 
     }
 
@@ -249,6 +249,6 @@ class Documents extends ActiveRecord
 
     final protected function getFileSize(): string
     {
-        return Yii::$app->formatter->asShortSize(filesize(Yii::getAlias('@file') . '/' . $this->category->slug . '/' . $this->subject->slug . '/' . date('Y_m') . '/' . $this->file));
+        return Yii::$app->formatter->asShortSize(filesize(Yii::getAlias('@file') . '/' . $this->category->slug . '/' . $this->subject->slug . '/' . date('Y_m',strtotime($this->created_at)) . '/' . $this->file));
     }
 }

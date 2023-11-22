@@ -15,7 +15,7 @@ use yii\db\ActiveRecord;
 $this->title =Category::name($category);
 $this->params['breadcrumbs'][] = $this->title;
 ?>
-<div class="card-body d-none d-sm-block">
+<div class="card-body d-sm-block">
     <div class="row ">
         <?php foreach ($subjects as $subject): ?>
             <div class="mb-1 col-sm-6 col-md-4 d-grid">
