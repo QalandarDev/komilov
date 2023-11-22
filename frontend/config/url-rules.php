@@ -7,5 +7,6 @@ return [
     'doc/<category:\w+>' => 'site/index',
     'download/<slug:\w+>' => 'site/download',
     'file/<slug:\w+>' => 'site/view',
+    'search/<search:\w+>' => 'site/search',
     '' => 'site/index',
 ];

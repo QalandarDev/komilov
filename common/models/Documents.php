@@ -38,6 +38,7 @@ use yii\web\UploadedFile;
  * @property-read mixed $imageAdminLink
  * @property-read string $fileAdminLink
  * @property bool $status
+ * @property string $search
  */
 class Documents extends ActiveRecord
 {
@@ -48,6 +49,12 @@ class Documents extends ActiveRecord
     {
         return 'documents';
     }
+    public function formName()
+    {
+        return '';
+    }
+
+    public $search;
 
     public function behaviors()
     {
@@ -87,7 +94,7 @@ class Documents extends ActiveRecord
             [['slug', 'name', 'category_id', 'subject_id'], 'required'],
             [['downloads', 'views', 'category_id', 'subject_id', 'created_by', 'updated_by'], 'default', 'value' => null],
             [['downloads', 'views', 'category_id', 'subject_id', 'created_by', 'updated_by'], 'integer'],
-            [['created_at', 'updated_at'], 'safe'],
+            [['created_at', 'updated_at','search'], 'safe'],
             [['price'], 'number'],
             [['status'], 'boolean'],
             [['slug', 'name', 'file', 'image'], 'string', 'max' => 255],

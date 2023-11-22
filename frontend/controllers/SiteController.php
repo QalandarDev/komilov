@@ -80,8 +80,10 @@ class SiteController extends Controller
     final public function actionIndex(Request $request): string
     {
         $category = $request->get('category') ?? '';
+        $model = new Documents();
         return $this->render('index', [
             'category' => $category,
+            'model' => $model,
         ]);
     }
 
@@ -236,6 +238,20 @@ class SiteController extends Controller
         $user = Yii::$app->user->identity;
         return $this->render('profile', [
             'user' => $user,
+        ]);
+    }
+
+    final public function actionSearch(Request $request){
+        $search=$request->get('search');
+        $model= new Documents();
+        $model->load($request->get());
+        $query = Documents::find()->where(['like', 'name', $search]);
+        $dataProvider = new \yii\data\ActiveDataProvider([
+            'query' => $query,
+        ]);
+        return $this->render('search', [
+            'model' => $model,
+            'dataProvider' => $dataProvider,
         ]);
     }
 }
