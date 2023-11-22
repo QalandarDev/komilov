@@ -245,7 +245,7 @@ class SiteController extends Controller
         $search=$request->get('search');
         $model= new Documents();
         $model->load($request->get());
-        $query = Documents::find()->where(['like', 'name', $search]);
+        $query = Documents::find()->where(['ilike', 'name', $search]);
         $dataProvider = new \yii\data\ActiveDataProvider([
             'query' => $query,
         ]);
